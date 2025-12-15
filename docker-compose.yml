@@ -10,6 +10,7 @@ services:
       - .:/app
       - static_volume:/app/game_catalog/staticfiles
       - media_volume:/app/game_catalog/media
+      - ./db.sqlite3:/app/game_catalog/db.sqlite3 
     ports:
       - "8002:8002"
     environment:
