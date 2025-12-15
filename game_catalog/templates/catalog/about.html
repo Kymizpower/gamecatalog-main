@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section mb-5 position-relative">
+    <div class="position-relative overflow-hidden rounded-3" style="height: 400px;">
+        <!-- Фоновое изображение -->
+        <div class="position-absolute top-0 start-0 w-100 h-100">
+            <div class="w-100 h-100" style="
+                background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.8)),
+                            url('{% static 'images/trio.jpg' %}');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+            "></div>
+        </div>
+        
+        <!-- Контент поверх изображения -->
+        <div class="position-relative h-100 d-flex flex-column justify-content-center align-items-center text-center text-white p-4">
+            <h1 class="display-4 fw-bold mb-3">
+                О проекте <span class="text-primary">GameCatalog</span>
+            </h1>
+            <p class="lead fs-4 mb-4" style="max-width: 700px;">
+                История создания каталога игр силами команды из трёх студентов
+            </p>
+            <div class="d-flex gap-3 mt-3">
+                <a href="#team" class="btn btn-primary btn-lg">
+                    <i class="bi bi-people"></i> Наша команда
+                </a>
+                <a href="#tech" class="btn btn-outline-light btn-lg">
+                    <i class="bi bi-gear"></i> Технологии
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- О проекте -->
+<div class="row mb-5">
+    <div class="col-lg-8 mx-auto text-center">
+        <h2 class="display-6 mb-4">Наша миссия</h2>
+        <p class="lead text-muted mb-4">
+            Создать прибыльный сайт и заработать очень много деняг))) <br>
+            Сдать курсач и получить 5
+        </p>
+    </div>
+</div>
+
+<!-- Команда -->
+<div id="team" class="py-5">
+    <div class="text-center mb-5">
+        <h2 class="display-6 mb-3">Наша команда(трёх мушкетёров)</h2>
+        <p class="lead text-muted">Три человека, одна цель - сдать курсач (очень Найдено)</p>
+    </div>
+    
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for member in team_members %}
+        <div class="col">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center p-4">
+                    
+                    <h4 class="card-title mb-2">{{ member.name }}</h4>
+                    <span class="badge bg-primary mb-3">{{ member.role }}</span>
+                    
+                    <p class="card-text mb-4">{{ member.description }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Технологии -->
+<div id="tech" class="py-5">
+    <div class="text-center mb-5">
+        <h2 class="display-6 mb-3">⚙️ Технологии проекта</h2>
+        <p class="lead text-muted">Стек технологий для создания лучшего опыта</p>
+    </div>
+    
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-4">
+        {% for tech in tech_stack %}
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="bi {{ tech.icon }} fs-1 text-{{ tech.color }}"></i>
+                    </div>
+                    <h5 class="card-title">{{ tech.name }}</h5>
+                    <p class="card-text small text-muted">{{ tech.description }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Стили для таймлайна */
+.timeline {
+    position: relative;
+    padding-left: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -40px;
+    top: 5px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 3px var(--bs-primary);
+}
+
+.timeline-content {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid var(--bs-primary);
+}
+
+/* Анимации для карточек команды */
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+}
+
+/* Стили для бейджей */
+.badge.bg-light {
+    border: 1px solid #dee2e6;
+}
+
+/* Градиентные тексты */
+.gradient-text {
+    background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+</style>
+{% endblock %}
+

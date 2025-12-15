@@ -1,0 +1,371 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ game.title }} - GameCatalog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Левая колонка с изображением -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+            {% if game.image %}
+            <img src="{{ game.image.url }}" class="card-img-top" alt="{{ game.title }}" style="max-height: 400px; object-fit: cover;">
+            {% endif %}
+            
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    {% if game.is_available %}
+                    <button class="btn btn-success btn-lg">
+                        <i class="bi bi-cart-plus"></i> Купить за {{ game.price }} ₽
+                    </button>
+                    <button class="btn btn-outline-secondary">
+                        <i class="bi bi-heart"></i> В избранное
+                    </button>
+                    {% else %}
+                    <button class="btn btn-secondary btn-lg" disabled>
+                        <i class="bi bi-slash-circle"></i> Недоступно
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Инфо бокс -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-info-circle"></i> Информация об игре</h6>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between align-items-start">
+                        <div class="me-2">
+                            <strong>Разработчик:</strong>
+                        </div>
+                        <div class="text-end text-break" style="max-width: 70%;">
+                            {{ game.developer }}
+                        </div>
+                    </div>
+                    
+                    {% if game.publisher %}
+                    <div class="list-group-item d-flex justify-content-between align-items-start">
+                        <div class="me-2">
+                            <strong>Издатель:</strong>
+                        </div>
+                        <div class="text-end text-break" style="max-width: 70%;">
+                            {{ game.publisher }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="list-group-item d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>Жанр:</strong>
+                        </div>
+                        <div>
+                            <span class="badge bg-info">{{ game.genre }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="list-group-item">
+                        <div class="mb-2">
+                            <strong>Платформа:</strong>
+                        </div>
+                        <div class="d-flex flex-wrap gap-1 justify-content-end">
+                            {% for platform in game.platform.split %}
+                            <span class="badge bg-secondary">{{ platform }}</span>
+                            {% empty %}
+                            <span class="badge bg-secondary">{{ game.platform }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    {% if game.release_date %}
+                    <div class="list-group-item d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>Дата выхода:</strong>
+                        </div>
+                        <div>
+                            {{ game.release_date|date:"d.m.Y" }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if game.metacritic_score %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Metacritic:</strong>
+                            </div>
+                            <div>
+                                <span class="badge {% if game.metacritic_score >= 80 %}bg-success{% elif game.metacritic_score >= 60 %}bg-warning{% else %}bg-danger{% endif %} p-2 fs-6">
+                                    {{ game.metacritic_score }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar {% if game.metacritic_score >= 80 %}bg-success{% elif game.metacritic_score >= 60 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                     role="progressbar" 
+                                     style="width: {{ game.metacritic_score }}%"
+                                     aria-valuenow="{{ game.metacritic_score }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Дополнительная информация -->
+                    <div class="list-group-item">
+                        <div class="row g-2">
+                            {% if game.is_multiplayer %}
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <i class="bi bi-people-fill text-success fs-4"></i>
+                                    <div class="small text-muted">Мультиплеер</div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if game.age_rating %}
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <div class="fs-4">{{ game.age_rating }}</div>
+                                    <div class="small text-muted">Рейтинг</div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Правая колонка с описанием -->
+    <div class="col-md-8">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Главная</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'game_list' %}">Игры</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ game.title|truncatechars:30 }}</li>
+            </ol>
+        </nav>
+        
+        <div class="d-flex align-items-start mb-4">
+            <div>
+                <h1 class="display-5 mb-2">{{ game.title }}</h1>
+                <div class="d-flex align-items-center text-muted mb-3">
+                    {% if game.release_date %}
+                    <span class="me-3">
+                        <i class="bi bi-calendar3"></i> {{ game.release_date|date:"Y" }}
+                    </span>
+                    {% endif %}
+                    <span class="badge bg-primary">{{ game.get_genre_display }}</span>
+                </div>
+            </div>
+            <div class="ms-auto">
+                {% if game.is_available %}
+                <div class="text-end">
+                    <div class="h2 mb-0">{{ game.price }} ₽</div>
+                    <small class="text-muted">Цена</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Описание игры -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="bi bi-card-text"></i> Описание игры</h5>
+            </div>
+            <div class="card-body">
+                <div class="game-description">
+                    {{ game.description|linebreaks }}
+                </div>
+                
+                <!-- Краткое описание -->
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6>Кратко об игре:</h6>
+                    <p class="mb-0">{{ game.short_description }}</p>
+                </div>
+            </div>
+        </div>
+        <!-- Отзывы (заглушка) -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="bi bi-chat-left-text"></i> Отзывы игроков</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center py-4">
+                    <i class="bi bi-chat-quote display-4 text-muted mb-3"></i>
+                    <h5>Пока нет отзывов</h5>
+                    <p class="text-muted">Будьте первым, кто оставит отзыв об этой игре!</p>
+                    <button class="btn btn-outline-primary">
+                        <i class="bi bi-pencil"></i> Написать отзыв
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Похожие игры -->
+{% if similar_games %}
+<div class="mt-5 pt-4">
+    <h3 class="mb-4">
+        <i class="bi bi-controller"></i> Похожие игры
+        <small class="text-muted fs-6">(по жанру {{ game.get_genre_display }})</small>
+    </h3>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        {% for similar in similar_games %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                {% if similar.image %}
+                <img src="{{ similar.image.url }}" class="card-img-top" alt="{{ similar.title }}" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h6 class="card-title">{{ similar.title|truncatechars:30 }}</h6>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="badge bg-info">{{ similar.get_genre_display }}</span>
+                        {% if similar.metacritic_score %}
+                        <span class="badge {% if similar.metacritic_score >= 80 %}bg-success{% elif similar.metacritic_score >= 60 %}bg-warning{% else %}bg-danger{% endif %}">
+                            {{ similar.metacritic_score }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="h6 mb-0">
+                            {% if similar.price > 0 %}
+                            {{ similar.price }} ₽
+                            {% else %}
+                            <span class="text-success">Бесплатно</span>
+                            {% endif %}
+                        </span>
+                        <a href="{{ similar.get_absolute_url }}" class="btn btn-sm btn-outline-primary">
+                            Смотреть
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small class="text-muted">
+                        <i class="bi bi-person"></i> {{ similar.developer|truncatechars:20 }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="mt-5">
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-search display-4 text-muted mb-3"></i>
+            <h5>Похожие игры не найдены</h5>
+            <p class="text-muted">Попробуйте поискать игры в том же жанре в нашем каталоге</p>
+            <a href="{% url 'game_list' %}?genre={{ game.genre }}" class="btn btn-primary">
+                <i class="bi bi-arrow-right"></i> Смотреть игры жанра {{ game.get_genre_display }}
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Действия с игрой -->
+<div class="mt-5">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-3 justify-content-center">
+                <a href="{% url 'game_list' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left"></i> Вернуться к каталогу
+                </a>
+                <button class="btn btn-outline-success">
+                    <i class="bi bi-heart"></i> В избранное
+                </button>
+                {% if game.is_available %}
+                <button class="btn btn-success btn-lg">
+                    <i class="bi bi-cart-plus"></i> Купить сейчас
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Стили для списка информации */
+.list-group-item {
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    padding: 0.75rem 1.25rem;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+/* Стили для описания игры */
+.game-description {
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.game-description p {
+    margin-bottom: 1.5rem;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .card-img-top {
+        max-height: 300px !important;
+    }
+    
+    .display-5 {
+        font-size: 2rem;
+    }
+    
+    .list-group-item {
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+/* Перенос длинных слов */
+.text-break {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Стили для бейджей платформ */
+.badge.bg-secondary {
+    font-size: 0.75em;
+    padding: 0.25em 0.5em;
+}
+
+/* Плавные переходы */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* Стили для прогресс-бара Metacritic */
+.progress {
+    background-color: #e9ecef;
+    border-radius: 10px;
+}
+
+.progress-bar {
+    border-radius: 10px;
+}
+</style>
+{% endblock %}
+
